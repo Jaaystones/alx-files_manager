@@ -10,7 +10,7 @@ import { APIError, errorResponse } from '../middlewares/error';
  * Injects routes with their handlers to the given Express application.
  * @param {Express} api
  */
-const Routes = (api) => {
+const appRoutes = (api) => {
   api.get('/status', AppController.getStatus);
   api.get('/stats', AppController.getStats);
 
@@ -33,4 +33,4 @@ const Routes = (api) => {
   api.use(errorResponse);
 };
 
-export default Routes;
+export default appRoutes;
