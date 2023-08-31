@@ -1,4 +1,5 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
+import Collection from 'mongodb/lib/collection';
 
 class DBClient {
   constructor() {
