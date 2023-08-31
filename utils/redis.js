@@ -28,7 +28,7 @@ class RedisClient {
    * @returns {boolean}
    */
   isAlive() {
-    return this.isClientConnected;
+    return this.isClientConnected();
   }
  
 
