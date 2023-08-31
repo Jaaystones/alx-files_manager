@@ -9,13 +9,14 @@ class DBClient {
 
     this.uri = `mongodb://${dbHost}:${dbPort}`;
     this.client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    this.db = null; // Initialize db to null
+    this.db = null;
   }
 
   async connect() {
     try {
       await this.client.connect();
       this.db = this.client.db(process.env.DB_DATABASE || 'files_manager');
+      console.log("Connected to MongoDB");
     } catch (error) {
       console.error("Error connecting to MongoDB:", error);
     }
@@ -55,6 +56,7 @@ class DBClient {
 
   async close() {
     await this.client.close();
+    console.log("Closed MongoDB connection");
   }
 }
 
