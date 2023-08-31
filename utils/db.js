@@ -6,14 +6,14 @@ class DBClient {
     const dbPort = process.env.DB_PORT || 27017;
     const dbName = process.env.DB_DATABASE || 'files_manager';
 
-    this.uri = `mongodb://${dbHost}:${dbPort}/${dbName}`;
+    this.uri = `mongodb://${dbHost}:${dbPort}`;
     this.client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    this.db = this.client.db();
   }
 
   async connect() {
     try {
       await this.client.connect();
+      this.db = this.client.db(process.env.DB_DATABASE || 'files_manager');
     } catch (error) {
       console.error("Error connecting to MongoDB:", error);
     }
@@ -51,6 +51,4 @@ class DBClient {
 }
 
 const dbClient = new DBClient();
-dbClient.connect(); // Connect once
-
 module.exports = dbClient;
