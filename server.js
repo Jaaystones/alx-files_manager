@@ -6,7 +6,7 @@ import injectMiddlewares from './libs/middlewares';
 const server = express();
 
 injectMiddlewares(server);
-Routes(server);
+appRoutes(server);
 startServer(server);
 
 export default server;
