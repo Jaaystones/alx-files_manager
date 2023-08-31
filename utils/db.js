@@ -8,6 +8,7 @@ class DBClient {
 
     this.uri = `mongodb://${dbHost}:${dbPort}`;
     this.client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    this.db = null; // Initialize db to null
   }
 
   async connect() {
@@ -25,6 +26,9 @@ class DBClient {
 
   async nbUsers() {
     try {
+      if (!this.db) {
+        throw new Error("Database connection not established");
+      }
       const usersCollection = this.db.collection('users');
       const count = await usersCollection.countDocuments();
       return count;
@@ -36,6 +40,9 @@ class DBClient {
 
   async nbFiles() {
     try {
+      if (!this.db) {
+        throw new Error("Database connection not established");
+      }
       const filesCollection = this.db.collection('files');
       const count = await filesCollection.countDocuments();
       return count;
@@ -51,4 +58,5 @@ class DBClient {
 }
 
 const dbClient = new DBClient();
+
 module.exports = dbClient;
