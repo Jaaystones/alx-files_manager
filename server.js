@@ -5,7 +5,7 @@ import injectMiddlewares from './libs/middlewares';
 
 const server = express();
 
-//injectMiddlewares(server);
+injectMiddlewares(server);
 appRoutes(server);
 startServer(server);
 
