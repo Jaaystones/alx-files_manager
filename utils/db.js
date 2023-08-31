@@ -8,50 +8,49 @@ class DBClient {
 
     this.uri = `mongodb://${dbHost}:${dbPort}/${dbName}`;
     this.client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    this.db = this.client.db();
+  }
+
+  async connect() {
+    try {
+      await this.client.connect();
+    } catch (error) {
+      console.error("Error connecting to MongoDB:", error);
+    }
   }
 
   async isAlive() {
-    try {
-      await this.client.connect();
-      return true;
-    } catch (error) {
-      console.error("Error connecting to MongoDB:", error);
-      return false;
-    } finally {
-      await this.client.close();
-    }
+    return this.client.isConnected();
   }
 
   async nbUsers() {
     try {
-      await this.client.connect();
-      const db = this.client.db();
-      const usersCollection = db.collection('users');
+      const usersCollection = this.db.collection('users');
       const count = await usersCollection.countDocuments();
       return count;
     } catch (error) {
       console.error("Error counting users:", error);
       return -1;
-    } finally {
-      await this.client.close();
     }
   }
 
   async nbFiles() {
     try {
-      await this.client.connect();
-      const db = this.client.db();
-      const filesCollection = db.collection('files');
+      const filesCollection = this.db.collection('files');
       const count = await filesCollection.countDocuments();
       return count;
     } catch (error) {
       console.error("Error counting files:", error);
       return -1;
-    } finally {
-      await this.client.close();
     }
+  }
+
+  async close() {
+    await this.client.close();
   }
 }
 
 const dbClient = new DBClient();
+dbClient.connect(); // Connect once
+
 module.exports = dbClient;
