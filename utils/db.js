@@ -1,34 +1,55 @@
-import { MongoClient } from 'mongodb';
-
-const HOST = process.env.DB_HOST || 'localhost';
-const PORT = process.env.DB_PORT || 27017;
-const DATABASE = process.env.DB_DATABASE || 'files_manager';
-const url = `mongodb://${HOST}:${PORT}`;
+const { MongoClient } = require('mongodb');
 
 class DBClient {
   constructor() {
-    this.client = new MongoClient(url, { useUnifiedTopology: true, useNewUrlParser: true });
-    this.client.connect().then(() => {
-      this.db = this.client.db(`${DATABASE}`);
-    }).catch((err) => {
-      console.log(err);
-    });
+    const dbHost = process.env.DB_HOST || 'localhost';
+    const dbPort = process.env.DB_PORT || 27017;
+    const dbName = process.env.DB_DATABASE || 'files_manager';
+
+    this.uri = `mongodb://${dbHost}:${dbPort}/${dbName}`;
+    this.client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
   }
 
-  isAlive() {
-    return this.client.isConnected();
+  async isAlive() {
+    try {
+      await this.client.connect();
+      return true;
+    } catch (error) {
+      console.error("Error connecting to MongoDB:", error);
+      return false;
+    } finally {
+      await this.client.close();
+    }
   }
 
   async nbUsers() {
-    const users = this.db.collection('users');
-    const usersNum = await users.countDocuments();
-    return usersNum;
+    try {
+      await this.client.connect();
+      const db = this.client.db();
+      const usersCollection = db.collection('users');
+      const count = await usersCollection.countDocuments();
+      return count;
+    } catch (error) {
+      console.error("Error counting users:", error);
+      return -1;
+    } finally {
+      await this.client.close();
+    }
   }
 
   async nbFiles() {
-    const files = this.db.collection('files');
-    const filesNum = await files.countDocuments();
-    return filesNum;
+    try {
+      await this.client.connect();
+      const db = this.client.db();
+      const filesCollection = db.collection('files');
+      const count = await filesCollection.countDocuments();
+      return count;
+    } catch (error) {
+      console.error("Error counting files:", error);
+      return -1;
+    } finally {
+      await this.client.close();
+    }
   }
 }
 
